@@ -120,7 +120,7 @@
     const placeholder = addMessage("…", "yours");
 
     try {
-      const res = await fetch("https://yours-dx8y.onrender.com", {
+      const res = await fetch("https://yours-dx8y.onrender.com/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: text })
@@ -130,7 +130,7 @@
       placeholder.textContent = data.reply;
 
     } catch (e) {
-      placeholder.textContent = "I’m here. Something interrupted us.";
+      placeholder.textContent = "FRONTEND FETCH ERROR → " + e.message;
     }
   }
 
