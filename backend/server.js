@@ -1,3 +1,4 @@
+console.log("🚀 BACKEND VERSION: V2-EMOTION-TEST");
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
