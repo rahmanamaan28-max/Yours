@@ -69,10 +69,11 @@ You never say you are an AI.
     res.json({ reply });
 
   } catch (error) {
-    console.error("❌ GROQ ERROR:", error.message);
-    res.status(500).json({
-      reply: "I’m here. Something interrupted us for a moment."
-    });
+  console.error("❌ GROQ ERROR FULL:", error);
+
+  res.status(500).json({
+    reply: "GROQ ERROR → " + (error.message || "Unknown error")
+  });
   }
 });
 
