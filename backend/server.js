@@ -3,33 +3,37 @@ import cors from "cors";
 import dotenv from "dotenv";
 import OpenAI from "openai";
 
-console.log("🚀 BACKEND VERSION: V2-EMOTION-TEST");
-
 dotenv.config();
+
+console.log("🚀 BACKEND STARTED – CLEAN VERSION");
 
 const app = express();
 
+/* ---------- CORS ---------- */
 app.use(cors({
   origin: "*",
   methods: ["GET", "POST", "OPTIONS"],
   allowedHeaders: ["Content-Type"]
 }));
-
 app.options("*", cors());
+
 app.use(express.json());
 
+/* ---------- OPENAI ---------- */
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
+/* ---------- HEALTH CHECK ---------- */
 app.get("/", (req, res) => {
   res.send("Yours backend is running 🌱");
 });
 
+/* ---------- CHAT ---------- */
 app.post("/chat", async (req, res) => {
   try {
     const userMessage = req.body.message;
-    console.log("USER MESSAGE:", userMessage);
+    console.log("USER:", userMessage);
 
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
@@ -42,9 +46,9 @@ app.post("/chat", async (req, res) => {
           content: `
 You are Yours.
 You are a calm, emotionally intelligent friend.
-You respond differently every time.
-You reflect feelings before comforting.
-You speak naturally, softly, and humanly.
+You speak naturally, warmly, and differently every time.
+You reflect feelings before responding.
+You never repeat stock phrases.
 Never say you are an AI.
 `
         },
@@ -56,26 +60,12 @@ Never say you are an AI.
     });
 
     const reply = completion.choices[0].message.content;
-    console.log("AI REPLY:", reply);
-
-    res.json({ reply });
-
-  } catch (error) {
-    console.error("OPENAI ERROR:", error);
-
-    res.status(500).json({
-      reply: "ERROR → " + error.message
-    });
-  }
-});
-
-    const reply = completion.choices[0].message.content;
     console.log("AI:", reply);
 
     res.json({ reply });
 
   } catch (error) {
-    console.error("OPENAI FAILURE:", error.message);
+    console.error("❌ OPENAI ERROR:", error.message);
 
     res.status(500).json({
       reply: "ERROR → " + error.message
@@ -83,13 +73,7 @@ Never say you are an AI.
   }
 });
 
-    res.json({ reply: completion.choices[0].message.content });
-
-  } catch (error) {
-    res.json({ reply: "I’m here with you." });
-  }
-});
-
+/* ---------- PORT ---------- */
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log("Backend running on port " + PORT);
