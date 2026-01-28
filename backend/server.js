@@ -29,7 +29,7 @@ app.get("/", (req, res) => {
 app.post("/chat", async (req, res) => {
   try {
     const userMessage = req.body.message;
-    console.log("USER:", userMessage);
+    console.log("USER MESSAGE:", userMessage);
 
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
@@ -40,16 +40,34 @@ app.post("/chat", async (req, res) => {
         {
           role: "system",
           content: `
-You are Yours — a calm, emotionally intelligent friend.
-You speak naturally, warmly, and differently each time.
+You are Yours.
+You are a calm, emotionally intelligent friend.
+You respond differently every time.
 You reflect feelings before comforting.
-You never repeat stock phrases.
+You speak naturally, softly, and humanly.
 Never say you are an AI.
 `
         },
-        { role: "user", content: userMessage }
+        {
+          role: "user",
+          content: userMessage
+        }
       ]
     });
+
+    const reply = completion.choices[0].message.content;
+    console.log("AI REPLY:", reply);
+
+    res.json({ reply });
+
+  } catch (error) {
+    console.error("OPENAI ERROR:", error);
+
+    res.status(500).json({
+      reply: "ERROR → " + error.message
+    });
+  }
+});
 
     const reply = completion.choices[0].message.content;
     console.log("AI:", reply);
