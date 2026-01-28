@@ -1,11 +1,11 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import OpenAI from "openai";
+import Groq from "groq-sdk";
 
 dotenv.config();
 
-console.log("🚀 BACKEND STARTED – CLEAN VERSION");
+console.log("🚀 BACKEND STARTED – GROQ VERSION");
 
 const app = express();
 
@@ -19,14 +19,14 @@ app.options("*", cors());
 
 app.use(express.json());
 
-/* ---------- OPENAI ---------- */
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+/* ---------- GROQ CLIENT ---------- */
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY
 });
 
 /* ---------- HEALTH CHECK ---------- */
 app.get("/", (req, res) => {
-  res.send("Yours backend is running 🌱");
+  res.send("Yours backend running with Groq 🌱");
 });
 
 /* ---------- CHAT ---------- */
@@ -35,21 +35,25 @@ app.post("/chat", async (req, res) => {
     const userMessage = req.body.message;
     console.log("USER:", userMessage);
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      temperature: 0.9,
-      presence_penalty: 0.6,
+    const completion = await groq.chat.completions.create({
+      model: "llama3-70b-8192",
+      temperature: 0.95,
+      presence_penalty: 0.7,
       frequency_penalty: 0.5,
       messages: [
         {
           role: "system",
           content: `
 You are Yours.
+You are not an assistant.
 You are a calm, emotionally intelligent friend.
+
 You speak naturally, warmly, and differently every time.
-You reflect feelings before responding.
+You reflect the user's feelings before comforting.
+You allow silence, softness, and imperfection.
 You never repeat stock phrases.
-Never say you are an AI.
+You never give advice unless asked.
+You never say you are an AI.
 `
         },
         {
@@ -65,10 +69,9 @@ Never say you are an AI.
     res.json({ reply });
 
   } catch (error) {
-    console.error("❌ OPENAI ERROR:", error.message);
-
+    console.error("❌ GROQ ERROR:", error.message);
     res.status(500).json({
-      reply: "ERROR → " + error.message
+      reply: "I’m here. Something interrupted us for a moment."
     });
   }
 });
