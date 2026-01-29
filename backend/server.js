@@ -37,10 +37,10 @@ app.post("/chat", async (req, res) => {
 
     const completion = await groq.chat.completions.create({
       model: "llama-3.1-8b-instant",
-      temperature: 0.7
-presence_penalty: 0.6
-frequency_penalty: 0.4
-max_tokens: 200
+      temperature: 0.7,
+presence_penalty: 0.6,
+frequency_penalty: 0.4,
+max_tokens: 200,
       messages: [
         {
           role: "system",
